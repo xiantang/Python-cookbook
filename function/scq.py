@@ -1,0 +1,23 @@
+def consumer():
+    r = 'here'
+    while True:
+        n1 = yield r
+        if not n1:
+            return
+        print('[CONSUMER] Consuming %s...' % n1)
+        r = '200 OK' + str(n1)
+
+
+def produce(c):
+    aa = c.send(None)
+    n = 0
+    while n < 5:
+        n = n + 1
+        print('[PRODUCER] Producing %s...' % n)
+        r1 = c.send(n)
+        print('[PRODUCER] Consumer return: %s' % r1)
+    c.close()
+
+
+c = consumer()
+produce(c)
