@@ -2,7 +2,6 @@ def apply_async(func,args,*,callback):
     # print(args)
     # print(*args) #解包
     result = func(*args)
-
     callback(result)
 from queue import Queue
 from functools import wraps
@@ -23,14 +22,8 @@ def inlined_async(func):
             try:
                 # print(result)
                 #send 传递yield表达式的值
-
                 a = f.send(result)
-
-                apply_async(
-                    a.func,
-                    a.args,
-                    callback=result_queue.put
-                )
+                apply_async(a.func,a.args,callback=result_queue.put)
             except StopIteration:
                 break
     return wrapper
