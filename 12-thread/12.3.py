@@ -69,34 +69,35 @@ import threading
 # q.join()
 # #队列为空 就执行其他操作 阻塞
 # print("dddddd")
-# from threading import Thread, Event
-# data = 'data'
-# import copy
-# def producer(out_q):
-#     running = True
-#     while running:
-#         evt = Event()
+from threading import Thread, Event
+data = 'data'
+import copy
+# from threading import Event
+def producer(out_q):
+    running = True
+    while running:
+        evt = Event()
+
+        print("put",data)
+        out_q.put((copy.deepcopy(data),evt))
+        while not evt.is_set():
+            evt.wait()#阻塞 等待
+        print('1111')
 #
-#         print("put",data)
-#         out_q.put((copy.deepcopy(data),evt))
-#         while not evt.is_set():
-#             evt.wait(.1)#阻塞 等待
-#         print('1111')
 #
+def consumer(in_q):
+    while True:
+        data,evt = in_q.get()
+        import time
+        time.sleep(5)
+        print("get",data)
+        evt.set()#取消阻塞
 #
-# def consumer(in_q):
-#     while True:
-#         data,evt = in_q.get()
-#         import time
-#         time.sleep(2)
-#         print("get",data)
-#         evt.set()#取消阻塞
-#
-# q = Queue()
-# t1 = Thread(target=consumer,args=(q,))
-# t2 = Thread(target=producer,args=(q,))
-# t1.start()
-# t2.start()
+q = Queue()
+t1 = Thread(target=consumer,args=(q,))
+t2 = Thread(target=producer,args=(q,))
+t1.start()
+t2.start()
 #向队列中添加数据项时并不会复制此数据项，
 # 线程间通信实际上是在线程间传递对象引用
 
