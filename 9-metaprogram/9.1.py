@@ -12,15 +12,12 @@ def timethis(func):
         return  result
     return wrapper
 
-
-
-
-
-@timethis
+# @timethis
 def countdown(n):
     while n > 0:
         n -=1
 
 
 if __name__ == '__main__':
-    countdown(100000)
+    func=timethis(countdown)
+    func(100000)

@@ -27,28 +27,28 @@ def spam():
 print(add(1,2))
 spam()
 
-def bbb(c):
-
-    def log(func):
-
-        def wrapper(*args):
-            print(c)
-            print(*args)#1 1 1
-            print(args)#(1, 1, 1)
-            import time
-            start=time.time()
-            func(*args)
-            end=time.time()
-            print(end-start)
-        return wrapper
-    return log
-
-# @bbb(100)
-def a(a,b,c):
-    print(a)
-    print(b)
-    print(c)
-    print("1")
-
-# a(1,1,1)
-bbb(1)(a)(1,1,1)
+# def bbb(c):
+#
+#     def log(func):
+#
+#         def wrapper(*args):
+#             print(c)
+#             print(*args)#1 1 1
+#             print(args)#(1, 1, 1)
+#             import time
+#             start=time.time()
+#             func(*args)
+#             end=time.time()
+#             print(end-start)
+#         return wrapper
+#     return log
+#
+# # @bbb(100)
+# def a(a,b,c):
+#     print(a)
+#     print(b)
+#     print(c)
+#     print("1")
+#
+# # a(1,1,1)
+# bbb(1)(a)(1,1,1)

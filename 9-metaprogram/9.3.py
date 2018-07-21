@@ -1,6 +1,8 @@
+from  functools import wraps
+
 def time_this(func):
 
-    # @wraps(func)
+    @wraps(func)
     def wrapper(*args,**kwargs):
         """
         Wrapper
@@ -25,8 +27,9 @@ def countdown(n):
     """
     while n>0:
         n-=1
-# orig_add=countdown.__wrapped__
-# orig_add(100)
+        print(n)
+orig_add=countdown.__wrapped__
+orig_add(100)
 
 
-from  functools import wraps
+
