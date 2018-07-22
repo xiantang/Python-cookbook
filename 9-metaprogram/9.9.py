@@ -31,6 +31,7 @@ print(add.ncalls)
 a=Spam()
 a.bar(5)
 s=Spam()
+print(Spam.bar.ncalls)
 def grok(self,x):
     pass
 print(grok.__get__(s,Spam))

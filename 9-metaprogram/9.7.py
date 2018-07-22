@@ -8,7 +8,7 @@ def typeasserat(*ty_args, **ty_kwargs):
         if not __debug__:
             return func
         sig = signature(func)
-        print(sig)
+
         #获取参数
         bound_type = sig.bind_partial(*ty_args,**ty_kwargs).arguments
         print(bound_type)
@@ -39,6 +39,7 @@ from  inspect import  signature
 def spam(x,y,z=42):
     pass
 sig = signature(spam)
+print('----')
 print(sig)
 print(sig.parameters)
 print(sig.parameters['z'].name)
