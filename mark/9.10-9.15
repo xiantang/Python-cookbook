@@ -1,0 +1,130 @@
+### 为类和静态方法提供装饰器
+
+给类和静态方法添加装饰器需要注意`@classmethod`
+和`@staticmethod`的位置
+
+```
+import time
+from functools import wraps
+
+# A simple decorator
+def timethis(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        r = func(*args, **kwargs)
+        end = time.time()
+        print(end-start)
+        return r
+    return wrapper
+
+# Class illustrating application of the decorator to different kinds of methods
+class Spam:
+    @timethis
+    def instance_method(self, n):
+        print(self, n)
+        while n > 0:
+            n -= 1
+
+    @classmethod
+    @timethis
+    def class_method(cls, n):
+        print(cls, n)
+        while n > 0:
+            n -= 1
+
+    @staticmethod
+    @timethis
+    def static_method(n):
+        print(n)
+        while n > 0:
+            n -= 1
+```
+
+但是如果写反就会报错
+
+```
+@timethis
+    @staticmethod
+
+    def static_method(n):
+        print(n)
+        while n>0:
+            n -=1
+
+    @timethis
+    @classmethod
+
+    def class_method(cls,n):
+        print(cls,n)
+        while n>0:
+            n -= 1
+Traceback (most recent call last):
+  File "C:/Users/dd/Documents/GitHub/Python-cookbook/9-metaprogram/9.10.py", line 40, in <module>
+    Spam.class_method(1000000)
+  File "C:/Users/dd/Documents/GitHub/Python-cookbook/9-metaprogram/9.10.py", line 9, in wrapper
+    r = func(*args,**kwargs)
+TypeError: 'classmethod' object is not callable
+```
+原因是`@classmethod`和`staticmethod`不会创建可以调用的对象
+只会产生一个描述器对象   当你将他们作为函数使用的时候，就会发生报错
+
+### 使用装饰器扩充类的功能
+
+如果你想重写类的定义/修改他的行为
+但是不想通过   继承或者元类的方式
+可以采取下列情况：
+
+```
+def log_get_attribute(cls):
+    orig_getattribute = cls.__getattribute__
+
+    def new_getattribute(self,name):
+        print("getting:" ,name)
+        return orig_getattribute(self,name)
+    cls.__getattribute__ = new_getattribute
+
+    return cls
+
+@log_get_attribute
+class A:
+    def __init__(self,x):
+        self.x = x
+
+    def samp(self):
+        pass
+
+a = A(42)
+print(a.x)
+a.samp()
+```
+
+上面通过重写了类的`__getattribute__`方法
+来修改类
+
+
+### 使用元类控制实例的创建
+
+```
+class Singleton(type):
+    def __init__(self,*args,**kwargs):
+        self.__instance = None
+        super().__init__(*args,**kwargs)
+
+    def __call__(self, *args, **kwargs):
+        if self.__instance is None:
+            self.__instance = super().__call__(*args,**kwargs)
+            return self.__instance
+        else:
+            return self.__instance
+sp=Singleton("Spam",(),{})
+a= sp()
+b= sp()
+print(a is b)
+```
+当这个元类对象被调用的时候
+`sp=Singleton("Spam",(),{}) `
+是一个类
+当这个类被调用的时候
+如果没有被实例化 就创建一个实例 并且赋值给
+`__instance` 如果创建了引用就返回这个`__instance`
